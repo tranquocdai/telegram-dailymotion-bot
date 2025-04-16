@@ -3,4 +3,3 @@ requests
 aiohttp
 python-dotenv
 nest_asyncio
-difflib
