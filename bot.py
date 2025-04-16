@@ -94,6 +94,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Use /find video title to search.")
+    await update.message.reply_text("Use /search video title to global search.")
 
 async def find_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
