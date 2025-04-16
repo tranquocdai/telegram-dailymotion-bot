@@ -4,9 +4,9 @@ import requests
 
 # Danh sách các kênh Dailymotion đã cho (dạng username)
 CHANNELS = [
-    "channel_name_1",
-    "channel_name_2",
-    "channel_name_3"
+    "redmedia8",
+    "shortdramamini",
+    "thedramazone"
 ]
 
 # Hàm tìm kiếm video theo tiêu đề
@@ -39,8 +39,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Main bot
 async def main():
-    app = ApplicationBuilder().token("YOUR_BOT_TOKEN").build()
-
+    app = ApplicationBuilder().token(os.environ.get("7925727449:AAEtuCcNPjQFXO-xxVsGsMl9RMEBaGMWVhE")).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
