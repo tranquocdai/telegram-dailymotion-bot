@@ -9,44 +9,133 @@ load_dotenv()
 
 # Danh sách các kênh Dailymotion đã cho (dạng username)
 CHANNELS = [
-    "redmedia8",
     "shortdramamini",
-    "thedramazone"
+    "thedramazone",
+    "dramashorttv",
+    "awkeend",
+    "SnapBox",
+    "MiniScene",
+    "FlashDrama",
+    "redmedia8",
+    "OpenDrama",
+    "BossDrama",
+    "ShortVerseFilms",
+    "shortviral",
+    "dramashorthub",
+    "EchoShorts",
+    "MiniPlot",
+    "TinyDeep",
+    "shorthub",
+    "PlusMore",
+    "FlashStar",
+    "MyColorGrass",
+    "bumz",
+    "shortdrama4u",
+    "bestnow",
+    "bestnowfull",
+    "monochannel",
+    "kimchannel",
+    "tatachannel",
+    "FlexDrama",
+    "HeiressDrama",
+    "AlphaDrama",
+    "carmellass",
+    "seechannel",
+    "showvashow",
+    "hoones",
+    "MovieTrailersSource2024"
 ]
+import difflib
 
 # Hàm tìm kiếm video theo tiêu đề
 def search_dailymotion_video(title: str):
     results = []
+    fuzzy_results = []
+
     for channel in CHANNELS:
-        url = f"https://api.dailymotion.com/user/{channel}/videos?fields=title,url"
+        url = f"https://api.dailymotion.com/user/{channel}/videos?fields=title,url&limit=100"
         response = requests.get(url)
         if response.status_code == 200:
             data = response.json()
             for item in data.get("list", []):
-                if title.lower() in item["title"].lower():
-                    results.append(item["url"])
-    return results
+                video_title = item["title"]
+                video_url = item["url"]
+                lower_title = video_title.lower()
+                lower_query = title.lower()
+
+                if lower_query in lower_title:
+                    results.append(video_url)
+                else:
+                    similarity = difflib.SequenceMatcher(None, lower_query, lower_title).ratio()
+                    if similarity > 0.3:
+                        fuzzy_results.append((similarity, video_url))
+
+    if results:
+        return results
+    else:
+        # Sắp xếp fuzzy_results theo điểm giống nhau
+        fuzzy_results.sort(key=lambda x: x[0], reverse=True)
+        return [item[1] for item in fuzzy_results]
+
 
 # Gửi tin nhắn khi bot khởi động
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Chào bạn! Hãy gửi tiêu đề video bạn muốn tìm.")
+    await update.message.reply_text("Hi there! Please send the video title you want to search.")
 
-# Xử lý tin nhắn văn bản
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.message.text
-    await update.message.reply_text(f"Đang tìm kiếm video có tiêu đề: \"{query}\"...")
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Use /search video title to search.")
+
+async def search_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not context.args:
+        await update.message.reply_text("Please provide a video title. Usage: /search Spoiled By My Billionaire")
+        return
+
+    query = " ".join(context.args)
+    #await update.message.reply_text(f"Searching for videos with the title: \"{query}\"...")
     results = search_dailymotion_video(query)
+
     if results:
-        for link in results:
+        for link in results[:2]:  # Giới hạn gửi 2 kết quả
             await update.message.reply_text(link)
     else:
-        await update.message.reply_text("Không tìm thấy video phù hợp.")
+        await update.message.reply_text("No videos found matching your search.")
 
+# Handle search command
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = update.message.text
+
+    # If the user sends "/help"
+    if text.lower() == "/help":
+        await update.message.reply_text("Send the command: /search video title to search for videos.")
+    
+    # If the message starts with "/find"
+    elif text.startswith("/search"):
+        query = text[len("/search "):]
+        await update.message.reply_text(f"Searching for the title: \"{query}\"...")
+        results = search_dailymotion_video(query)
+        
+        # If results are found
+        if results:
+            for link in results:
+                await update.message.reply_text(link)
+        else:
+            await update.message.reply_text("No videos found matching your search.")
 # Main bot
 async def main():
+    token = os.environ.get("BOT_TOKEN")
+    if not token:
+        print("⚠️ BOT_TOKEN is not set in .env!")
+        return
     app = ApplicationBuilder().token(os.environ.get("BOT_TOKEN")).build()
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("help", help_command))
+    app.add_handler(CommandHandler("search", search_command))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    print("Bot đang chạy...")
+    print("🤖 Bot is running...")
     await app.run_polling()
+import asyncio
+if __name__ == "__main__":
+    import nest_asyncio
+    nest_asyncio.apply()
+    asyncio.run(main())
