@@ -2,3 +2,5 @@ python-telegram-bot==22.0
 requests
 aiohttp
 python-dotenv
+nest_asyncio
+difflib
