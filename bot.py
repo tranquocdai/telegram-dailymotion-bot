@@ -46,6 +46,16 @@ CHANNELS = [
     "MovieTrailersSource2024"
 ]
 import difflib
+def search_global_dailymotion_videos(query: str, limit: int = 100):
+    results = []
+    url = f"https://api.dailymotion.com/videos?search={query}&fields=title,url&limit={limit}&sort=relevance"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        data = response.json()
+        for item in data.get("list", []):
+            results.append(f"{item['title']}\n{item['url']}")
+    return results
 
 # Hàm tìm kiếm video theo tiêu đề
 def search_dailymotion_video(title: str):
@@ -83,11 +93,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Hi there! Please send the video title you want to search.")
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Use /search video title to search.")
+    await update.message.reply_text("Use /find video title to search.")
 
-async def search_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def find_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
-        await update.message.reply_text("Please provide a video title. Usage: /search Spoiled By My Billionaire")
+        await update.message.reply_text("Please provide a video title. Usage: /find Spoiled By My Billionaire")
         return
 
     query = " ".join(context.args)
@@ -99,18 +109,32 @@ async def search_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text(link)
     else:
         await update.message.reply_text("No videos found matching your search.")
+        
+async def search_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not context.args:
+        await update.message.reply_text("Please provide a video title. Usage: /search Spoiled By My Billionaire")
+        return
 
+    query = " ".join(context.args)
+    #await update.message.reply_text(f"Searching for videos with the title: \"{query}\"...")
+    results = search_global_dailymotion_videos(query)
+
+    if results:
+        for link in results[:2]:  # Giới hạn gửi 2 kết quả
+            await update.message.reply_text(link)
+    else:
+        await update.message.reply_text("No videos found matching your search.")
 # Handle search command
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
 
     # If the user sends "/help"
     if text.lower() == "/help":
-        await update.message.reply_text("Send the command: /search video title to search for videos.")
+        await update.message.reply_text("Send the command: /find video title to search for videos.")
     
     # If the message starts with "/find"
-    elif text.startswith("/search"):
-        query = text[len("/search "):]
+    elif text.startswith("/find"):
+        query = text[len("/find "):]
         await update.message.reply_text(f"Searching for the title: \"{query}\"...")
         results = search_dailymotion_video(query)
         
@@ -120,6 +144,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await update.message.reply_text(link)
         else:
             await update.message.reply_text("No videos found matching your search.")
+
 # Main bot
 async def main():
     token = os.environ.get("BOT_TOKEN")
@@ -129,6 +154,7 @@ async def main():
     app = ApplicationBuilder().token(os.environ.get("BOT_TOKEN")).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_command))
+    app.add_handler(CommandHandler("find", find_command))
     app.add_handler(CommandHandler("search", search_command))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
