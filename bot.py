@@ -1,8 +1,11 @@
+import os
+import requests
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
-import requests
-import os
 from dotenv import load_dotenv
+
+# Load biến môi trường từ .env
+load_dotenv()
 
 # Danh sách các kênh Dailymotion đã cho (dạng username)
 CHANNELS = [
