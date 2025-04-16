@@ -1,6 +1,8 @@
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 import requests
+import os
+from dotenv import load_dotenv
 
 # Danh sách các kênh Dailymotion đã cho (dạng username)
 CHANNELS = [
@@ -39,7 +41,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Main bot
 async def main():
-    app = ApplicationBuilder().token(os.environ.get("7925727449:AAHNUFeLe7I3gylbGBBdlyoJmPxZa7fvmO8")).build()
+    app = ApplicationBuilder().token(os.environ.get("BOT_TOKEN")).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
