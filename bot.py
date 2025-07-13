@@ -8,43 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Danh sách các kênh Dailymotion đã cho (dạng username)
-CHANNELS = [
-    "shortdramamini",
-    "thedramazone",
-    "dramashorttv",
-    "awkeend",
-    "SnapBox",
-    "MiniScene",
-    "FlashDrama",
-    "redmedia8",
-    "OpenDrama",
-    "BossDrama",
-    "ShortVerseFilms",
-    "shortviral",
-    "dramashorthub",
-    "EchoShorts",
-    "MiniPlot",
-    "TinyDeep",
-    "shorthub",
-    "PlusMore",
-    "FlashStar",
-    "MyColorGrass",
-    "bumz",
-    "shortdrama4u",
-    "bestnow",
-    "bestnowfull",
-    "monochannel",
-    "kimchannel",
-    "tatachannel",
-    "FlexDrama",
-    "HeiressDrama",
-    "AlphaDrama",
-    "carmellass",
-    "seechannel",
-    "showvashow",
-    "hoones",
-    "MovieTrailersSource2024"
-]
+CHANNELS = []
 import difflib
 def search_global_dailymotion_videos(query: str, limit: int = 100):
     results = []
