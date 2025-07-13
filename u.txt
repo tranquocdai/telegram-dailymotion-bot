@@ -19,11 +19,9 @@ OnlyShortDrama
 HotTrendDrama
 DestinyDrama
 ComebackDrama
-TopTrendShort
 MarriageDrama
 BillionaireDrama
 RelationshipDrama
-OnlyEngSub
 Hot.Trend.Short
 SweetnessDrama
 billionaire.boy
