@@ -4,7 +4,8 @@ gotodrama
 shortdramamini
 thedramazone
 dramashorttv
-shortviral
+billionaire.boy
+rich.boss
 MiniScene
 framepulse
 bitfocus
@@ -24,14 +25,9 @@ BillionaireDrama
 RelationshipDrama
 Hot.Trend.Short
 SweetnessDrama
-billionaire.boy
-rich.boss
-MixScope
-luxury.zone
 BeeLife
 SunSight
 FlashDrama
-OpenDrama
 BossDrama
 ShortVerseFilms
 shorthub
@@ -44,6 +40,7 @@ redmedia8
 CompletedShort
 shortdrama360
 MoonShort
+shortviral
 vivianLife
 zgtz
 ttkt
